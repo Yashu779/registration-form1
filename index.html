@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personal information</title>
+    <style>
+      #main {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-content: center;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        padding: 0;
+      }
+
+      #validationArea {
+        width: 350px;
+        height: 60px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main" style="border: 5px solid rgb(11, 145, 38)">
+      <div>
+        Change Validation from here<br />
+        <textarea onchange="initiate()" id="validationArea">
+{
+                "validators":[
+                    {
+                        "fields":"Name",
+                        "validator":[{"required":true,"length4-10":true}]
+                    },
+                    {
+                        "fields":"email",
+                        "validator":[{"required":false,"valid":true}]
+                    },
+                    {
+                        "fields":"CNumber",
+                        "validator":[{"required":false,"length10":true}]
+                    },
+                    {
+                        "fields":"Country",
+                        "validator":[{"required":true}]
+                    },
+                    {
+                        "fields":"state",
+                        "validator":[{"required":true}]
+                    },
+                    {
+                        "fields":"DoB",
+                        "validator":[{"required":false}]
+                    }
+                ]
+            }</textarea
+        >
+      </div>
+      <div class="iframe-box">
+      <iframe
+        style="border: 1px solid rgb(252, 5, 5)"
+        id="frame"
+        height="450"
+        width="350"
+        onload="initiate()"
+        srcdoc="<!DOCTYPE html>
+            <html>
+            <body>
+            
+            <style>
+                label{
+                    font-weight: bold;
+                }
+                form{
+                    margin:0px 20px;
+                    background-color: #E6E6FA;
+                    height:100%;
+                    padding:12px
+                }
+                button{
+                    background-color:#4CAF50;
+                    color: white;
+                    border: 4px solid #4CAF50;
+                    border-radius: 3px;
+                }
+                input[type='text']{
+                    width: 100%;
+                    
+                }
+                input[type='number']{
+                    width: 100%;
+                    
+                }
+                input[type='date']{
+                    width: 100%;
+                    
+                }
+            </style>
+            
+            <form onsubmit='validateForm();return false'>
+                <p1>Can you please provide your personal details?</p1>
+                <br></br>
+                <div class='name'>
+                    <label for='name'>Name</label><br>
+                    <input id='Name' type='text' name='Name' >
+                </div>
+                <br>
+                <div class='date of birth'>
+                    <label for='DoB'>Date of birth</label><br>
+                    <input id='DoB' type='date' name='DoB'>
+                </div>
+                <br>
+                <div class='cNumber'>
+                    <label for='CNumber'>Contact Number</label><br>
+                    <input id='CNumber' type='number' name='CNumber'>
+                </div>
+                <br>
+                <div class='country' >
+                        <label for='Country'>Country</label><br>
+                        <select id='Country' name='Country' onchange='updateStates(this)'>    
+                        </select>
+                </div>
+                <br>
+                <div class='State'>
+                        <label for='state'>State</label><br>
+                        <select id='state'  name='state' >    
+                        </select>
+                </div>
+                <br>
+                <div class='email'>
+                        <label for='email'>Your email</label><br>
+                        <input id='email' type='text' name='email' width: '100%'>
+                </div>
+                <br>
+                <div class='submit'>
+                        <center>
+                            <button id= 'Submit' type='Submit' name= 'Submit'> Submit </button>
+                        </center>
+                </div>
+                </form>
+            
+            
+            
+            <script>
+            
+                var xmlhttp = new XMLHttpRequest();
+                var url = 'https://raw.githubusercontent.com/stefanbinder/countries-states/master/countries.json';
+                st={}
+                xmlhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var myArr = JSON.parse(this.responseText);
+                        populate(myArr);
+                    }
+                };
+                xmlhttp.open('GET', url, true);
+                xmlhttp.send();
+                
+                function populate(arr) {
+                    const country=document.getElementById('Country');
+                    const blankOption=document.createElement('option')
+                    blankOption.disabled=true;
+                    blankOption.selected=true;
+                    blankOption.hidden=true;
+                    
+                    country.appendChild(blankOption)
+                    for(i of arr){
+                        //console.log(i.name);
+                        st[i.name]=i.states;
+                        const option=document.createElement('option')
+                        option.value=i.name
+                        option.innerText=i.name
+                        country.appendChild(option)
+                    }
+                }
+            
+                function updateStates(country){
+                    const Co=country.value;
+                    const states=document.getElementById('state');
+                    states.innerHTML=''
+                    const blankOption=document.createElement('option')
+                    blankOption.disabled=true;
+                    blankOption.selected=true;
+                    blankOption.hidden=true;
+                    states.appendChild(blankOption)
+                    for(i of st[Co]){
+                        console.log(i.name);
+                        st[i.name]=i.states;
+                        const option=document.createElement('option')
+                        option.value=i.name
+                        option.innerText=i.name
+                        states.appendChild(option)
+                    }
+                }
+                
+                function validateForm(){
+                    var errors=0
+                    data={}
+                    Result={}
+                    data['Name']= document.getElementById('Name').value;
+                    data['DoB']= document.getElementById('DoB').value;
+                    data['CNumber']= document.getElementById('CNumber').value;
+                    data['Country']= document.getElementById('Country').value;
+                    data['state']= document.getElementById('state').value;
+                    data['email']= document.getElementById('email').value;
+                    console.log(data);
+                    for (i of validation.validators){
+                        var value=data[i.fields];
+                        if(i.validator[0].required==true && value==''){
+                            errors=errors+1;
+                            Result[i.fields]={'error':i.fields+' is required'}
+                        }
+                        else if((i.validator[0].length4-10==true) && (value.length<4 || value.length>10)){
+                            errors=errors+1;
+                            Result[i.fields]={'error':'Length should be between 4-10 characters.'}
+                        }                       
+                        else if(i.validator[0].valid==true && (value.match(
+                            /^(([^<>()[\]\\.,;:\s@\']+(\.[^<>()[\]\\.,;:\s@\']+)*)|(\'.+\'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                          )==null)){
+                            errors=errors+1;
+                            Result[i.fields]={'error':'Please Enter Valid Email id'}
+                        }
+                        
+                        else if(i.validator[0].length10==true && (value.length!=10)){
+                            errors=errors+1;
+                            Result[i.fields]={'error':'mobile number should be of 10 digits.'}
+                        }
+                    }
+                    if(errors==0){
+                        Result.Success='All fields are Valid'
+                    }
+                    console.log(JSON.stringify(Result));
+                    var parentWindow = window.parent;
+                    console.log(window.parent)
+                    parentWindow.postMessage(Result,'*');
+                    return false;
+                }
+
+                window.addEventListener('message', (e) => {
+                    var data= e.data; 
+                    validation=data;
+                    //console.log(data);
+                    });
+
+                
+            </script>
+            </body>
+            </html>"
+      >
+      </iframe>
+    </div>
+      <div id="result"></div>
+    </div>
+    <script>
+      window.addEventListener("message", (e) => {
+        iframe = document.getElementById("frame");
+        childWindow = iframe ? iframe.contentWindow : null;
+        if (e.source == childWindow) {
+          var data = e.data;
+          res = document.getElementById("result");
+          res.innerText = "Result:" + JSON.stringify(data);
+        }
+      });
+      validation = {
+        validators: [
+          {
+            fields: "Name",
+            validator: [{ required: true, "length4-10": true }],
+          },
+          {
+            fields: "email",
+            validator: [{ required: false, valid: true }],
+          },
+          {
+            fields: "CNumber",
+            validator: [{ required: false, length10: true }],
+          },
+          {
+            fields: "Country",
+            validator: [{ required: true }],
+          },
+          {
+            fields: "state",
+            validator: [{ required: true }],
+          },
+          {
+            fields: "DoB",
+            validator: [{ required: false }],
+          },
+        ],
+      };
+      function initiate() {
+        iframe = document.getElementById("frame");
+        childWindow = iframe ? iframe.contentWindow : null;
+        var val;
+        try {
+          val = JSON.parse(document.getElementById("validationArea").value);
+        } catch {
+          val = null;
+          alert("JSON error please enter proper JSON");
+        }
+        Newvalidation = val ? val : validation;
+        childWindow.postMessage(Newvalidation, "*");
+      }
+    </script>
+  </body>
+</html>
